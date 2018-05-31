@@ -1,0 +1,8 @@
+
+from Crypto.Cipher import AES
+
+obj = AES.new('hackgt{oracle_arena_sux_go_cavs}', AES.MODE_CBC, '0000000000000000')
+message = "hello world"
+padding = 16 - len(message)
+ciphertext = obj.encrypt(message)
+print ciphertext

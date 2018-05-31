@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/dashboard.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>New Tab</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/css/color.min.css">
+<link rel="stylesheet" href="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/css/style.min.css">
+
+<style type="text/css" id="font-override"></style></head><body class="f--default"><svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="icon-folder" viewBox="0 0 512 512">
+<path d="M390.5 144h-167c-4.7 0-10.7-9.9-18.5-19-7.1-8.3-14.7-13-20.5-13h-60.3c-15.5 0-28.2 8.9-28.2 24.3v234.6c0 15.5 12.7 29.1 28.2 29.1h266.3c15.5 0 25.5-13.6 25.5-29.1V168.8c0-15.5-10-24.8-25.5-24.8zm-266.3-16H179.3c3.9 0 8.6 1.6 14.3 8.3 12.1 14.3 15.5 23.7 29.9 23.7h167c6.6 0 9.5 2.2 9.5 8.8V192H112v-55.7c0-9 10.3-8.3 12.2-8.3zm266.3 256H124.2c-6.5 0-12.2-6.2-12.2-13.1V208h288v162.9c0 6-2.6 13.1-9.5 13.1z"></path>
+</symbol>
+</defs>
+</svg>
+
+
+<div class="bookmarks-bar bookmarks-placeholder" style="display:none; position: fixed; top: 0; left: 0; right: 0; height: 31px; background-color: rgba(242,242,242,1); border-bottom: 0.5px solid rgba(182,180,182,0.4)">
+</div>
+<div class="overlay loading-overlay">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" class="loading-logo" fill="#ccc">
+<path d="M500.024 1000.08C223.851 1000.08-.032 776.2-.032 500.024S223.851-.032 500.024-.032s500.056 223.883 500.056 500.056S776.2 1000.08 500.024 1000.08zm250.33-523.321a228.485 228.485 0 0 0-5.749-51.018 136.773 136.773 0 0 0-19.042-45.27 98.029 98.029 0 0 0-35.928-32.336Q667 335.925 633.946 335.92q-43.839 0-78.324 26.228t-48.863 75.09h-1.437a172.1 172.1 0 0 0-11.5-39.881 108.707 108.707 0 0 0-20.839-31.976 92.149 92.149 0 0 0-31.976-21.557q-19.048-7.9-44.911-7.9a120.578 120.578 0 0 0-74.372 25.509 147.849 147.849 0 0 0-29.1 30.539 141.892 141.892 0 0 0-20.12 40.959h-1.437q0-9.332-.359-21.2t-.718-24.431q-.37-12.562-.718-23.353-.371-10.779-1.078-17.964h-15.809q.708 7.191 1.438 17.964.707 10.779 1.077 22.635.354 11.856.719 23.353t.359 19.4v247.187h15.809V511.251q0-38.079 9.7-67.9 9.7-29.809 26.588-50.659A117.245 117.245 0 0 1 347.6 360.71a108.444 108.444 0 0 1 48.5-11.137q29.455 0 48.5 12.575a92.92 92.92 0 0 1 29.82 31.257 125.19 125.19 0 0 1 14.731 41.677 256.2 256.2 0 0 1 3.952 43.114v198.326h15.809V511.251q0-38.079 10.06-67.9 10.054-29.809 26.946-50.659a117.245 117.245 0 0 1 39.521-31.977 108.445 108.445 0 0 1 48.5-11.137q29.455 0 48.863 12.575a98.748 98.748 0 0 1 30.9 31.257 127.515 127.515 0 0 1 16.168 41.677 217.585 217.585 0 0 1 4.67 43.114v198.321h15.809V476.759z"></path>
+</svg>
+</div>
+<div class="background-overlay show"></div>
+<ul id="background" class="background"><li class="fadein" style="background-image: url(&quot;backgrounds/8625d9f3-c059-4dc6-b915-37bb5ea7e6a3.jpg&quot;);"></li></ul>
+
+<div class="widgets show-widgets">
+<div id="full"></div>
+<div id="top-left" class="top-left"><div id="quicklinks" class="quicklinks top-widget" style="opacity: 1;"><span class="quicklinks-show top-nav toggle" href="">Links</span>
+
+<div class="pane-container quicklinks-wrapper nipple-top-left">
+	<div class="pane quicklinks-pane" style="max-height: 270px;">
+		<div class="message connection-message" style="display: none;"><i class="loading-icon"></i>Loading...</div>
+		<ol>
+			<li data-momo-id="chromeTab" data-place="links" class="optional-link show first-link"><a href="chrome-search://local-ntp/local-ntp.html" class="local"><svg class="icon-svg icon-chrome-tab" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 497.401 497.401"><g><path d="M478.742 154.382H320.714c28.366 21.765 47.111 55.717 47.111 94.307 0 30.63-14.345 56.386-30.933 79.445-28.322 39.41-95.817 168.878-95.817 168.878 2.567.043 5.026.388 7.636.388 137.341 0 248.69-111.348 248.69-248.69-.022-33.412-6.709-65.229-18.659-94.328z"></path><path d="M248.172 129.619c54.402-.388 217.628-2.049 217.628-2.049C423.24 51.511 342.069 0 248.69 0 170.819 0 101.361 35.829 55.782 91.848l75.972 134.925c10.268-55.113 58.349-96.744 116.418-97.154z"></path><path d="M248.668 367.825c-51.964 0-91.568-35.117-111.974-79.855-20.535-45.018-98.061-171.984-98.061-171.984C14.301 154.425 0 199.832 0 248.69c0 124.744 91.935 227.744 211.696 245.648l77.288-134.019c-12.641 4.615-26.101 7.506-40.316 7.506z"></path><circle cx="248.668" cy="248.711" r="80.416"></circle></g></svg> Chrome Tab</a></li>
+			<li data-momo-id="apps" class="optional-link show" data-place="links"><a href="chrome://apps/" id="app-return" class="local"><svg class="icon-svg icon-apps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M3 3h6v6H3V3zm10 0h6v6h-6V3zm10 0h6v6h-6V3zM3 13h6v6H3v-6zm10 0h6v6h-6v-6zm10 0h6v6h-6v-6zM3 23h6v6H3v-6zm10 0h6v6h-6v-6zm10 0h6v6h-6v-6z"></path></svg> Apps</a></li>
+		<li draggable="true"><div draggable="true" class="">
+	<a draggable="false" href="http://mail.google.com/"><img src="./New Tab_files/ico"> Gmail</a>
+    <span draggable="false" class="control destroy">✕</span>
+</div>
+</li></ol>
+		<div class="empty links-empty">
+			<p class="links-empty-title">No links yet</p>
+			<p class="links-empty-description">Add your favorite links</p>
+		</div>
+		<div class="quicklinks-new" style="display: block;">
+			<span class="hide quicklinks-new-hide">✕</span>
+			<input type="text" id="quicklinks-new-title" class="quicklinks-new-title quicklinks-new-toggle" placeholder="New Link">
+			<input type="text" id="quicklinks-new-url" class="quicklinks-new-url" placeholder="URL">
+		</div>
+		<div class="add-error-message message">Connection required to add link. <span class="message-action retry-add">Retry</span></div>
+	</div>
+</div>
+</div><div id="dashlinks" class="quicklinks dashlinks top-widget" style="opacity: 1;"><span data-momo-id="chromeTab" data-place="dash" data-url="chrome-search://local-ntp/local-ntp.html" class="optional-link toggle toggle-icon toggle-chrome-tab" title="Chrome Tab"><svg class="icon-svg icon-chrome-tab" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 497.401 497.401"><g><path d="M478.742 154.382H320.714c28.366 21.765 47.111 55.717 47.111 94.307 0 30.63-14.345 56.386-30.933 79.445-28.322 39.41-95.817 168.878-95.817 168.878 2.567.043 5.026.388 7.636.388 137.341 0 248.69-111.348 248.69-248.69-.022-33.412-6.709-65.229-18.659-94.328z"></path><path d="M248.172 129.619c54.402-.388 217.628-2.049 217.628-2.049C423.24 51.511 342.069 0 248.69 0 170.819 0 101.361 35.829 55.782 91.848l75.972 134.925c10.268-55.113 58.349-96.744 116.418-97.154z"></path><path d="M248.668 367.825c-51.964 0-91.568-35.117-111.974-79.855-20.535-45.018-98.061-171.984-98.061-171.984C14.301 154.425 0 199.832 0 248.69c0 124.744 91.935 227.744 211.696 245.648l77.288-134.019c-12.641 4.615-26.101 7.506-40.316 7.506z"></path><circle cx="248.668" cy="248.711" r="80.416"></circle></g></svg></span><!--
+--><span data-momo-id="apps" data-place="dash" data-url="chrome://apps" class="optional-link toggle toggle-icon toggle-apps" title="Apps"><svg class="icon-svg icon-apps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M3 3h6v6H3V3zm10 0h6v6h-6V3zm10 0h6v6h-6V3zM3 13h6v6H3v-6zm10 0h6v6h-6v-6zm10 0h6v6h-6v-6zM3 23h6v6H3v-6zm10 0h6v6h-6v-6zm10 0h6v6h-6v-6z"></path></svg></span>
+</div></div>
+<div id="top-right" class="top-right"><div id="weather" class="metric weather" style="opacity: 1;"><!-- Metric -->
+<div class="weather-toggle" title="Partly Cloudy">
+	<div class="metric-stat">
+			<span class="icon icon-weather" data-icon="H" title="Partly Cloudy"></span><span class="metric-stat-number">22</span><span class="weather-degree">°</span><span class="unit hide">c</span>
+	</div>
+	<span class="location metric-label data" title="">Atlanta</span>
+	<span class="metric-message"></span>
+</div>
+
+
+<!-- Popup -->
+<div class="pane weather-pane widget-pop nipple-top-right">
+	<div class="weather-settings">
+		<i class="icon-ellipsis weather-settings-icon"></i>
+		<div class="dropdown weather-settings-dropdown">
+			<ul class="dropdown-list">
+				<li class="toggle-hourly">
+					Hourly forecast
+					<span class="toggle-slider"><span class="toggle-switch"></span></span>
+				</li>
+				<li class="toggle-details">
+					Extra weather info
+					<span class="toggle-slider"><span class="toggle-switch"></span></span>
+				</li>
+				<li class="line"></li>
+				<li class="toggle-metric">
+					Metric units
+					<span class="toggle-slider on"><span class="toggle-switch"></span></span>
+				</li>
+				<li class="weather-location-edit-menu">Edit location</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Main weather area -->
+	<section class="weather-current">
+
+		<!-- Header -->
+		<header class="weather-current-header">
+
+			<span class="weather-current-location" title=""><span class="weather-location-name">Atlanta</span>
+			<i class="loading-icon"></i>
+
+			<span class="weather-location-icon weather-location-edit"><i class="icon-edit"></i></span>
+			<span class="weather-location-icon weather-location-reset" title="Use location"><svg class="weather-location-reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.636 51.636"><path d="M51.353.914a.999.999 0 0 0-1.135-.213L.583 23.481a1 1 0 0 0 .252 1.895l22.263 3.731 2.545 21.038a1.002 1.002 0 0 0 1.889.324l24-48.415a1 1 0 0 0-.179-1.14z"></path></svg></span>
+
+			<span class="weather-current-conditions">Partly Cloudy</span>
+		</span></header>
+
+
+		<div class="weather-current-temp-row">
+			<!-- Main temp -->
+			<div class="weather-current-temp-wrapper toggle-hourly">
+				
+				<span class="icon icon-weather weather-current-icon" data-icon="H" title="Partly Cloudy"></span><span class="weather-current-temp">22°</span>
+			</div>
+
+			<!-- Main details -->
+		</div>
+
+
+		<!-- Extra weather info -->
+	</section>
+
+
+	<!-- 5-day advance forecast -->
+	<section class="weather-forecast weather-forecast-daily active">
+		<div class="weather-forecast-item weather-forecast-day" data-day="Saturday" title="Partly Cloudy">
+			<div class="weather-forecast-label">Sat</div>
+			<span class="icon icon-weather weather-forecast-icon" data-icon="H"></span>
+			<span class="weather-forecast-high">23°</span><span class="weather-forecast-low">19°</span>
+		</div>
+		<div class="weather-forecast-item weather-forecast-day" data-day="Sunday" title="Scattered Thunderstorms">
+			<div class="weather-forecast-label">Sun</div>
+			<span class="icon icon-weather weather-forecast-icon" data-icon="O"></span>
+			<span class="weather-forecast-high">27°</span><span class="weather-forecast-low">18°</span>
+		</div>
+		<div class="weather-forecast-item weather-forecast-day" data-day="Monday" title="Scattered Thunderstorms">
+			<div class="weather-forecast-label">Mon</div>
+			<span class="icon icon-weather weather-forecast-icon" data-icon="O"></span>
+			<span class="weather-forecast-high">21°</span><span class="weather-forecast-low">13°</span>
+		</div>
+		<div class="weather-forecast-item weather-forecast-day" data-day="Tuesday" title="Sunny">
+			<div class="weather-forecast-label">Tue</div>
+			<span class="icon icon-weather weather-forecast-icon" data-icon="B"></span>
+			<span class="weather-forecast-high">19°</span><span class="weather-forecast-low">11°</span>
+		</div>
+		<div class="weather-forecast-item weather-forecast-day" data-day="Wednesday" title="Sunny">
+			<div class="weather-forecast-label">Wed</div>
+			<span class="icon icon-weather weather-forecast-icon" data-icon="B"></span>
+			<span class="weather-forecast-high">21°</span><span class="weather-forecast-low">8°</span>
+		</div>
+	</section>
+</div>
+</div></div>
+<div id="top-bar"></div>
+<div id="center-above"></div>
+<div id="center"><div id="centerclock" style="opacity: 1; display: block;"><div class="clock default-clock"><h1 class="time">20:32</h1>
+<span class="format">PM</span></div></div><div id="greeting" class="transition" style="opacity: 1;"><h2>Good <span class="period">evening</span>, <span class="name" spellcheck="false">Joshua</span>.</h2></div></div>
+<div id="center-below"><div id="focuses" style="opacity: 1;"><ol><li class="focus" style="opacity: 1; display: list-item;"><h3>Today</h3>
+<span class="control checkbox"><i class="icon icon-checkbox-empty focus-open"></i><i class="icon icon-checkbox focus-done"></i></span><p class="todays-focus">a</p><span class="control delete"><i>✕</i></span>
+</li></ol>
+<div class="message focus-message">
+    <i class="loading-icon"></i>Loading...
+</div>
+</div></div>
+<div id="bottom"><blockquote class="quote" id="shortquote" style="opacity: 1;"><p class="quote-body">
+	<span class="quote-body-text">“Progress lies not in enhancing what is, but in advancing toward what will be.”</span><i class="icon-angle-right"></i>
+	<span class="quote-source"><span class="quote-source-text">Khalil Gibran</span><span class="control control-heart"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-heart-empty.svg" class="icon icon-heart-empty"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-heart.svg" class="icon icon-heart"></span><span class="control control-refresh" style="display: none;"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-refresh.svg" class="icon icon-refresh"></span><span data-url="https://twitter.com/intent/tweet?text=%22Progress+lies+not+in+enhancing+what+is%2c+but+in+advancing+toward+what+will+be.%22+%e2%80%94Khalil+Gibran&amp;via=momentumdash&amp;related=momentumdash,levibucsis,jaywaterman" class="control control-twitter"><i class="icon icon-twitter"></i></span></span>
+</p></blockquote></div>
+<div id="bottom-right" class="bottom-right"><div id="todo" class="widget-bottom-right todo show show-fade-in" style="opacity: 1;"><div class="pane-container todo-pane-container nipple-bottom-right">
+    <div class="pane todo-pane todo-pane-legacy" style="max-height: 270px; height: auto;">
+        <div class="todo-header">
+            <ul>
+                <li><span class="todo-count">7 to do</span></li>
+            </ul>
+            <div class="error-message">Connection required to add Todo</div>
+        </div>
+        <div class="empty empty-todo">
+            <div class="content">
+                <div class="graphic">☺</div>
+                <div class="title">Nothing to do</div>
+                <div class="description">One step at a time...</div>
+            </div>
+        </div>
+        <ol class="todo-list" style="max-height: 200px;"><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">t</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">f</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">ut</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">f</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">out</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">oup</span>
+</li><li class="todo-item todo-item-legacy" draggable="true"><i class="control destroy">✕</i>
+<i class="loading-icon"></i>
+<i class="control error-icon">!</i>
+<label><input class="todo-item-checkbox" type="checkbox"></label><span class="todo-item-title">ma</span>
+</li></ol>
+        <input id="todo-new" class="todo-input todo-new" type="text" placeholder="New Todo">
+    </div>
+</div>
+<span id="todo-remaining"></span>
+<span class="toggle todo-toggle">Todo</span>
+<li class="placeholder" style="display: none;"></li></div></div>
+<div id="bottom-left" class="bottom-left"><div id="preferences" class="preferences"><span class="toggle"><svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340.274 340.274"><path d="M293.629 127.806l-5.795-13.739c19.846-44.856 18.53-46.189 14.676-50.08l-25.353-24.77-2.516-2.12h-2.937c-1.549 0-6.173 0-44.712 17.48l-14.184-5.719c-18.332-45.444-20.212-45.444-25.58-45.444h-35.765c-5.362 0-7.446-.006-24.448 45.606l-14.123 5.734C86.848 43.757 71.574 38.19 67.452 38.19l-3.381.105-27.27 26.737c-4.138 3.891-5.582 5.263 15.402 49.425l-5.774 13.691C0 146.097 0 147.838 0 153.33v35.068c0 5.501 0 7.44 46.585 24.127l5.773 13.667c-19.843 44.832-18.51 46.178-14.655 50.032l25.353 24.8 2.522 2.168h2.951c1.525 0 6.092 0 44.685-17.516l14.159 5.758c18.335 45.438 20.218 45.427 25.598 45.427h35.771c5.47 0 7.41 0 24.463-45.589l14.195-5.74c26.014 11 41.253 16.585 45.349 16.585l3.404-.096 27.479-26.901c3.909-3.945 5.278-5.309-15.589-49.288l5.734-13.702c46.496-17.967 46.496-19.853 46.496-25.221V151.88c-.005-5.519-.005-7.446-46.644-24.074zM170.128 228.474c-32.798 0-59.504-26.187-59.504-58.364 0-32.153 26.707-58.315 59.504-58.315 32.78 0 59.43 26.168 59.43 58.315-.006 32.177-26.656 58.364-59.43 58.364z" fill="#FFF"></path></svg></span><div id="settings-main" class="pane-container settings-container"></div></div><div id="background-info" class="background-info" style="opacity: 0.961336;"><span class="background-info-title">Rio de Janeiro, Brazil<i class="icon-angle-right"></i></span>
+<span class="background-info-source">
+    <span class="background-info-source-link" data-url="http://www.airpano.ru/files/Rio-de-Janeiro-Brazil/2-2?from=momentum">Photo by airpano</span><span class="control control-heart"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-heart-empty.svg" class="icon icon-heart-empty"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-heart.svg" class="icon icon-heart"></span><span class="control control-refresh" title="Next Background" style="display: none;"><img src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/img/icon-refresh.svg" class="icon icon-refresh"></span>
+</span>
+</div></div>
+</div>
+<div class="overlay drop-overlay">
+<p>Drop to upload backgrounds <span class="badge plus-badge">PLUS</span></p>
+</div>
+<script async="" src="./New Tab_files/analytics.js"></script><script src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/js/lib.min.js"></script>
+<script src="chrome-extension://laookkfknpbbblfpciffpaejjkokdgca/app/app.min.js"></script>
+
+<script async="" src="./New Tab_files/bootstrap"></script>
+
+</body></html>
