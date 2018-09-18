@@ -61,7 +61,7 @@ Server::process_request(const int client_fd)
     std::istringstream msg_buf_stream = get_msg_stream(client_fd);
     Command cmd = parse_protobuf_msg(&msg_buf_stream);
     Command rsp = handle_action(cmd);
-    /* send_response(client_fd, rsp); */
+    send_response(client_fd, rsp);
 }
 
 Command
@@ -72,6 +72,21 @@ Server::parse_protobuf_msg(std::istringstream* msg_buf_stream)
         throw std::runtime_error("Bad message");
     }
     return cmd;
+}
+
+void
+Server::send_response(const int client_fd, const Command& cmd)
+{
+    std::string out;
+    cmd.SerializeToString(&out);
+    uint16_t send_len = htons(out.size());
+    if (send_exact(client_fd, 2, (char*)(&send_len)) < 0) {
+        return;
+    }
+    if (send_exact(client_fd, out.size(), out.c_str())) {
+        return;
+    }
+    return;
 }
 
 Command
@@ -102,11 +117,15 @@ Server::handle_action(const Command& cmd)
 Command
 Server::handle_create_user(const CreateUser& cmd)
 {
-    std::cout << "in create user" << std::endl;
-    std::cout << cmd.username() << std::endl;
-    std::cout << cmd.password() << std::endl;
-    std::cout << cmd.trial_user() << std::endl;
-    throw std::runtime_error("a");
+    Command out_cmd;
+    std::string out_message;
+    if (harmony.login(cmd.username(), cmd.password(), out_message)) {
+        out_cmd.mutable_create_user_response()->set_success(true);
+    } else {
+        out_cmd.mutable_create_user_response()->set_success(false);
+    }
+    out_cmd.mutable_create_user_response()->set_msg(out_message);
+    return out_cmd;
 }
 
 int
@@ -122,6 +141,21 @@ Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
         curr_read += recv_res;
     }
     return curr_read;
+}
+
+int
+Server::send_exact(const int client_fd, const uint16_t send_len, const char* buf)
+{
+    // TODO add timeout here
+    uint16_t curr_sent = 0;
+    while (curr_sent < send_len) {
+        ssize_t send_res = send(client_fd, (buf + curr_sent), (send_len - curr_sent), 0);
+        if (send_res < 0) {
+            return -1;
+        }
+        curr_sent += send_res;
+    }
+    return curr_sent;
 }
 
 std::istringstream

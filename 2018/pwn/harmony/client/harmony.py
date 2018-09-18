@@ -25,7 +25,13 @@ class HarmonyConnection:
         cmd.create_user.username = username
         cmd.create_user.password = password
         resp = self.send_cmd(cmd)
-        print(resp)
+        if not resp.HasField('create_user_response'):
+            raise RuntimeError('Unknown response from server')
+        if resp.create_user_response.success:
+            self.token = resp.create_user_response.msg
+            return True
+        else:
+            raise RuntimeError(resp.create_user_response.msg)
 
     def send_cmd(self, cmd):
         cmd_bytes = cmd.SerializeToString()
@@ -44,7 +50,7 @@ class HarmonyConnection:
             recv_bytes.append(recv_buf_tmp)
             recv_len -= len(recv_buf_tmp)
         buf = b''.join(recv_bytes)
-        cmd = harmony_pb2
+        cmd = harmony_pb2.Command()
         cmd.ParseFromString(buf)
         return cmd
 

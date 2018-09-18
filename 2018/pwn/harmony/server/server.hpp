@@ -23,6 +23,8 @@ private:
     void process_request_thread();
     void process_request(const int client_fd);
     int read_exact(const int client_fd, const uint16_t read_len, char* buf);
+    int send_exact(const int client_fd, const uint16_t send_len, const char* buf);
+    void send_response(const int client_fd, const Command& cmd);
     std::istringstream get_msg_stream(const int client_fd);
     Command parse_protobuf_msg(std::istringstream* msg_buf_stream);
     Command handle_action(const Command& cmd);

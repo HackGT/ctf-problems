@@ -3,7 +3,12 @@ CFLAGS=-g -std=c++1z -Werror -Wextra -Wall -pedantic
 LFLAGS=-lprotobuf -lpthread -lstdc++
 
 
-all: server/harmony client/harmony_pb2.py
+all: server/harmony client
+
+client: client/harmony_pb2.py client/ui/chat_window.py client/ui/login_window.py client/ui/register_window.py
+
+client/ui/%.py: client/ui/%.ui
+	pyuic5 $< > $@
 
 client/harmony_pb2.py : harmony.proto
 	protoc -I./client --proto_path=./ --python_out ./client ./harmony.proto
@@ -21,6 +26,6 @@ server/harmony: server/harmony.o server/user.o server/messages.o server/server.o
 	$(CC) $(LFLAGS) -o $@ $^
 
 clean:
-	rm -f server/harmony server/*.o server/proto/*.o server/proto/harmony.pb.cc server/proto/harmony.pb.h client/harmony_pb2.py
+	rm -f server/harmony server/*.o server/proto/*.o server/proto/harmony.pb.cc server/proto/harmony.pb.h client/harmony_pb2.py client/ui/*.py
 
-.PHONY: clean
+.PHONY: clean client
