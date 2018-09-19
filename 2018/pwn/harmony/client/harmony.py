@@ -53,6 +53,3 @@ class HarmonyConnection:
         cmd = harmony_pb2.Command()
         cmd.ParseFromString(buf)
         return cmd
-
-x = HarmonyConnection('localhost', 11111)
-x.create_user('hello', 'world')

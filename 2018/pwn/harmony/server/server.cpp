@@ -1,5 +1,6 @@
 #include "server.hpp"
 
+#include <chrono>
 #include <iostream>
 
 #include <arpa/inet.h>
@@ -39,6 +40,8 @@ Server::handle_request(const int client_fd)
 void
 Server::process_request_thread()
 {
+    using namespace std::chrono_literals;
+
     int client_fd = -1;
     while (running) {
         while (queue_lock.test_and_set()) {}
@@ -52,16 +55,21 @@ Server::process_request_thread()
             process_request(client_fd);
             client_fd = -1;
         }
+        std::this_thread::sleep_for(1s);
     }
 }
 
 void
 Server::process_request(const int client_fd)
 {
-    std::istringstream msg_buf_stream = get_msg_stream(client_fd);
-    Command cmd = parse_protobuf_msg(&msg_buf_stream);
-    Command rsp = handle_action(cmd);
+    try {
+        std::istringstream msg_buf_stream = get_msg_stream(client_fd);
+        Command cmd = parse_protobuf_msg(&msg_buf_stream);
+        Command rsp = handle_action(cmd);
     send_response(client_fd, rsp);
+    } catch (const std::runtime_error& e) {
+        std::cout << "Error " << e.what() << std::endl;
+    }
 }
 
 Command
@@ -93,6 +101,7 @@ Command
 Server::handle_action(const Command& cmd)
 {
     if (cmd.has_create_user()) {
+        std::cout << "Has create user" << std::endl;
         return handle_create_user(cmd.create_user());
     } else if (cmd.has_create_user_response()) {
     } else if (cmd.has_create_user_response()) {
@@ -117,11 +126,14 @@ Server::handle_action(const Command& cmd)
 Command
 Server::handle_create_user(const CreateUser& cmd)
 {
+    // TODO: field size checking
     Command out_cmd;
     std::string out_message;
-    if (harmony.login(cmd.username(), cmd.password(), out_message)) {
+    if (harmony.add_user(cmd.username(), cmd.password(), cmd.trial_user())) {
+        out_message = "Successfully created user";
         out_cmd.mutable_create_user_response()->set_success(true);
     } else {
+        out_message = "User already exists";
         out_cmd.mutable_create_user_response()->set_success(false);
     }
     out_cmd.mutable_create_user_response()->set_msg(out_message);

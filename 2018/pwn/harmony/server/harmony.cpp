@@ -1,5 +1,7 @@
 #include "harmony.hpp"
 
+#include <iostream>
+
 Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"}
 {
     add_user("admin", "admin_password", true);
@@ -9,6 +11,7 @@ Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"}
 bool
 Harmony::add_user(const std::string& username, const std::string& password, const bool trial_user)
 {
+    std::cout << "trying to add " << username << std::endl;
     if (user_name_map.find(username) != user_name_map.end()) {
         return false;
     }

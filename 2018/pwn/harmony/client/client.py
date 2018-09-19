@@ -16,13 +16,7 @@ class LoginWindow(login_window.Ui_MainWindow):
         self.register_2.clicked.connect(self.handle_register)
 
     def handle_login(self):
-        username = self.username.text()
-        password = self.password.text()
-        try:
-            harmony.create_user(username, password)
-            self.main_window.switch_to_chat()
-        except RuntimeError as e:
-            self.error.setText(e)
+        pass
 
     def handle_register(self):
         self.main_window.switch_to_register()
@@ -36,11 +30,16 @@ class RegisterWindow(register_window.Ui_MainWindow):
         self.load_hooks()
 
     def load_hooks(self):
-        self.pushButton_2.clicked.connect(self.handle_register)
+        self.register_2.clicked.connect(self.handle_register)
 
     def handle_register(self):
-        print('Register window register')
-        self.main_window.switch_to_login()
+        username = self.username.text()
+        password = self.password.text()
+        try:
+            self.main_window.harmony.create_user(username, password)
+            self.main_window.switch_to_login()
+        except RuntimeError as e:
+            self.error_label.setText(str(e))
 
 
 class MainWindow(PyQt5.QtWidgets.QMainWindow):
@@ -60,9 +59,9 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
 
 
 def main():
-    harmony = harmony.HarmonyConnection('localhost', 11111)
+    harmony_instance = harmony.HarmonyConnection('localhost', 11111)
     app = PyQt5.QtWidgets.QApplication(['Harmony'])
-    window = MainWindow(harmony)
+    window = MainWindow(harmony_instance)
     window.show()
     return app.exec_()
 
