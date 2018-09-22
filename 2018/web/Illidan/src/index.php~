@@ -1,0 +1,51 @@
+ <?php
+
+    include("config.php");
+
+    $username = isset($_POST["username"]) ? $_POST["username"]: "" ;
+    $password = isset($_POST["password"]) ? $_POST["password"]: "" ;
+
+    $salt = "buzzislife"
+    $salted_hash = base64_encode($salt.$password)
+
+    if (!$link = mysql_connect($db_host, $db_user, $db_password))
+        die('<pre>Could not connect to mysql</pre>');
+
+    if (!mysql_select_db($db_name, $link))
+        die('<pre>Could not select database</pre>');
+
+    $sql = "SELECT * FROM users WHERE username = '".$username."' and password = '".$salted_hash."'";
+    $result = mysql_query($sql, $link);
+
+    if (!$result) {
+        echo "<pre>DB Error, could not query the database</pre>";
+        echo '<pre>MySQL Error: ' . mysql_error()."</pre>";
+        die;
+    }
+
+    if(mysql_num_rows($result) > 0)
+      die("Welcome, ".$_POST["username"]."! I'm afraid you're too late... the flag's already faced the hatred of ten thousand years :(");
+    else if(isset($_POST["username"]) && isset($_POST["password"]))
+      echo "nope<br>";
+    mysql_free_result($result);
+
+?>
+<!DOCTYPE html>
+
+<html>
+  <body>
+    <form class = "form-signin" role = "form"
+            action = "./index.php";
+            method = "post">
+            <h4 class = "form-signin-heading">Login</h4>
+            <input type = "text" class = "form-control"
+               name = "username" placeholder = "username"
+               required autofocus></br>
+            <input type = "password" class = "form-control"
+               name = "password" placeholder = "password" required>
+            <button class = "btn btn-lg btn-primary btn-block" type = "submit"
+               name = "login">Login</button>
+         </form>
+
+  </body>
+</html>
