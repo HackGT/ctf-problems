@@ -1,0 +1,12 @@
+[package]
+name = "weak-cookie-sig"
+version = "0.1.0"
+authors = ["George Macon <george.macon@gmail.com>"]
+
+[dependencies]
+askama = { version="0.7", features=["with-rocket"] }
+rocket = "0.3.16"
+rocket_codegen = "0.3.16"
+
+[build-dependencies]
+askama = "0.7"
