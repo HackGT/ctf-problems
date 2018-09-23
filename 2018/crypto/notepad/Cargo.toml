@@ -5,6 +5,8 @@ authors = ["George Macon <george.macon@gmail.com>"]
 
 [dependencies]
 askama = { version="0.7", features=["with-rocket"] }
+base64 = "0.9.3"
+byteorder = "1.2.6"
 rocket = "0.3.16"
 rocket_codegen = "0.3.16"
 
