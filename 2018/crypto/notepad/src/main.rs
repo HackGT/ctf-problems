@@ -15,9 +15,11 @@ extern crate serde_json;
 
 use askama::Template;
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
+use error_chain::ChainedError;
 use num::Integer;
-use rocket::http::{Cookie, Cookies};
+use rocket::http::{Cookie, Cookies, Status};
 use rocket::request::Form;
+use rocket::response::Failure;
 use std::io::Cursor;
 
 mod errors {
@@ -63,30 +65,56 @@ impl State {
         }
     }
 
-    fn from_cookies_impl(cookies: &Cookies) -> Result<State> {
+    fn from_cookies(cookies: &Cookies) -> Result<State> {
         match cookies.get("state") {
-            Some(c) => Ok(serde_json::from_slice(
-                &base64::decode(c.value()).chain_err(|| "base64::decode")?,
-            ).chain_err(|| "JSON decode")?),
-            None => bail!("No cookie!"),
+            Some(c) => {
+                let value = c.value();
+                let dot_index = match value.find('.') {
+                    Some(x) => x,
+                    None => bail!("No dot"),
+                };
+                let (pay, dothash) = value.split_at(dot_index);
+                let hash = &dothash[1..];
+                let pay_bytes = base64::decode(&pay).chain_err(|| "base64::decode(pay)")?;
+                let hash_bytes = base64::decode(&hash).chain_err(|| "base64::decode(hash)")?;
+                let pay_hash = custom_hash(&pay_bytes);
+                let hash_int = Cursor::new(&hash_bytes)
+                    .read_u64::<BigEndian>()
+                    .expect("read vec");
+                let pay_int = Cursor::new(&pay_hash)
+                    .read_u64::<BigEndian>()
+                    .expect("read vec");
+                if hash_int != pay_int {
+                    bail!("Bad signature")
+                }
+                Ok(serde_json::from_slice(&pay_bytes).chain_err(|| "JSON decode")?)
+            }
+            None => Ok(State::new()),
         }
-    }
-
-    fn from_cookies(cookies: &Cookies) -> State {
-        State::from_cookies_impl(cookies).unwrap_or_else(|_| State::new())
     }
 
     fn to_cookie(&self) -> Result<Cookie> {
         let ser = serde_json::to_string(self).chain_err(|| "Failed to dump state to JSON")?;
-        //let hash = custom_hash(&ser);
-        let value = base64::encode(&ser.as_bytes());
+        let ser_bytes = ser.as_bytes();
+        let hash = custom_hash(&ser_bytes);
+        let value = format!("{}.{}", base64::encode(&ser_bytes), base64::encode(&hash));
         Ok(Cookie::new("state", value))
     }
 }
 
+fn load_state(cookies: &Cookies) -> std::result::Result<State, Failure> {
+    match State::from_cookies(cookies) {
+        Ok(state) => Ok(state),
+        Err(err) => {
+            println!("{}", err.display_chain().to_string());
+            Err(Failure(Status::BadRequest))
+        }
+    }
+}
+
 #[get("/")]
-fn index(cookies: Cookies) -> State {
-    State::from_cookies(&cookies)
+fn index(cookies: Cookies) -> std::result::Result<State, Failure> {
+    load_state(&cookies)
 }
 
 #[derive(FromForm, Debug)]
@@ -95,13 +123,16 @@ struct UpdateForm {
 }
 
 #[post("/", data = "<data>")]
-fn update_notes(mut cookies: Cookies, data: Form<UpdateForm>) -> State {
-    let mut state = State::from_cookies(&cookies);
+fn update_notes(
+    mut cookies: Cookies,
+    data: Form<UpdateForm>,
+) -> std::result::Result<State, Failure> {
+    let mut state = load_state(&cookies)?;
     state.notes = data.into_inner().notes;
     if let Ok(cookie) = state.to_cookie() {
         cookies.add(cookie.into_owned());
     }
-    state
+    Ok(state)
 }
 
 fn main() {
