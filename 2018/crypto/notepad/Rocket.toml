@@ -1,5 +1,2 @@
-[staging]
-port = 8000
-
-[production]
+[global]
 port = 8000
