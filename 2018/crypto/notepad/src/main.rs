@@ -43,6 +43,7 @@ fn custom_hash(data: &[u8]) -> Vec<u8> {
         for _ in 0..tail {
             next_val = (next_val << 8) + cur.read_u8().expect("read vec") as u64;
         }
+        next_val = next_val << (8 * (8 - tail));
         state = (state + (next_val % BASE)) % BASE;
     }
     let mut res = Vec::with_capacity(8);
