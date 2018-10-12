@@ -16,6 +16,7 @@ User::authenticate(const std::string& password) const
 bool
 User::get_messages(MessagesToDeliver& out_messages)
 {
+    // XXX swap these instead? Equivalent.
     out_messages.direct_messages = std::move(direct_messages);
     out_messages.group_messages = std::move(group_messages);
 

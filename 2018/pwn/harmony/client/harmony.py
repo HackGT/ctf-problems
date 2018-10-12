@@ -1,8 +1,10 @@
+import collections
 import functools
 import socket
 import struct
 
 import harmony_pb2
+
 
 def auth(func):
     @functools.wraps(func)
@@ -12,11 +14,17 @@ def auth(func):
         return func(self, *args, **kwargs)
     return inner
 
+
 class HarmonyConnection:
-    def __init__(self, host, port, token=None):
+    def __init__(self, host, port, username=None, token=None):
         self.host = host
         self.port = port
+        self.username = None
         self.token = token
+        self.usernames = []
+        self.groups = []
+        self.group_msgs = {}
+        self.direct_msgs = {}
 
     def create_user(self, username, password):
         if len(username) > 100 or len(password) > 100:
@@ -29,9 +37,102 @@ class HarmonyConnection:
             raise RuntimeError('Unknown response from server')
         if resp.create_user_response.success:
             self.token = resp.create_user_response.msg
-            return True
         else:
             raise RuntimeError(resp.create_user_response.msg)
+        return True
+
+    def login(self, username, password):
+        if len(username) > 100 or len(password) > 100:
+            raise RuntimeError('Username or password too long')
+        cmd = harmony_pb2.Command()
+        cmd.login.username = username
+        cmd.login.password = password
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('login_response'):
+            raise RuntimeError('Unknown response from server')
+        if resp.login_response.success:
+            self.token = resp.login_response.token
+        else:
+            raise RuntimeError(resp.create_user_response.msg)
+        self.username = username
+        return True
+
+    def send_group_message(self, target_group, msg):
+        if len(msg) > 2048 or len(target_group) > 100:
+            raise RuntimeError("msg or target group too long!")
+        cmd = harmony_pb2.Command()
+        cmd.send_group_message.token = self.token
+        cmd.send_group_message.target_group = target_group
+        cmd.send_group_message.text = msg
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('send_group_message_response'):
+            raise RuntimeError('Unknown response from server')
+        if not resp.send_group_message_response.success:
+            raise RuntimeError('failed to send group message!!')
+        return True
+
+    def send_direct_message(self, target_user, msg):
+        if len(msg) > 2048 or len(target_user) > 100:
+            raise RuntimeError("msg or target group too long!")
+        cmd = harmony_pb2.Command()
+        cmd.send_direct_message.token = self.token
+        cmd.send_direct_message.target_user = target_user
+        cmd.send_direct_message.text = msg
+
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('send_direct_message_response'):
+            raise RuntimeError('Unknown response from server')
+        if not resp.send_direct_message_response.success:
+            raise RuntimeError('failed to send group message!!')
+
+        fmt_contents = '<{}>: {}'.format(self.username, msg)
+        try:
+            self.direct_msgs[target_user].append(fmt_contents)
+        except KeyError:
+            self.direct_msgs[target_user] = collections.deque(
+                [fmt_contents], maxlen=100)
+        return True
+
+    def get_messages(self):
+        cmd = harmony_pb2.Command()
+        cmd.get_messages.token = self.token
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('get_messages_response'):
+            raise RuntimeError('Unknown response from server')
+        if not resp.get_messages_response.success:
+            raise RuntimeError('failed to send group message!!')
+        group_msgs = resp.get_messages_response.group_messages
+        for msg in group_msgs:
+            fmt_contents = '<{}>: {}'.format(msg.sending_user, msg.text)
+            try:
+                self.group_msgs[msg.target_group].append(fmt_contents)
+            except KeyError:
+                self.group_msgs[msg.target_group] = collections.deque(
+                    [fmt_contents], maxlen=100)
+
+        direct_msgs = resp.get_messages_response.direct_messages
+        for msg in direct_msgs:
+            fmt_contents = '<{}>: {}'.format(msg.sending_user, msg.text)
+            try:
+                self.direct_msgs[msg.sending_user].append(fmt_contents)
+            except KeyError:
+                self.direct_msgs[msg.sending_user] = collections.deque(
+                    [fmt_contents], maxlen=100)
+
+        return True
+
+    def get_info(self):
+        cmd = harmony_pb2.Command()
+        cmd.get_info.token = self.token
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('get_info_response'):
+            raise RuntimeError('Unknown response from server')
+        if not resp.get_info_response.success:
+            raise RuntimeError('failed to send group message!!')
+
+        self.usernames = resp.get_info_response.usernames
+        self.groups = resp.get_info_response.groups
+        return True
 
     def send_cmd(self, cmd):
         cmd_bytes = cmd.SerializeToString()

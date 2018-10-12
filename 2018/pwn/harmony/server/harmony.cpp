@@ -1,8 +1,9 @@
 #include "harmony.hpp"
 
+#include <algorithm>
 #include <iostream>
 
-Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"}
+Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes", "Dragons"}
 {
     add_user("admin", "admin_password", true);
     // TODO read file and get secret message
@@ -125,6 +126,17 @@ Harmony::get_trial_message(const std::string& token, std::string& out_trial_mess
 std::string
 Harmony::gen_random_token() const
 {
-    // TODO
-    return "hello";
+    // TODO fixup?
+    auto randchar = []() -> char
+    {
+        const char charset[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[ rand() % max_index ];
+    };
+    std::string str(64, 0);
+    std::generate_n(str.begin(), 64, randchar);
+    return str;
 }

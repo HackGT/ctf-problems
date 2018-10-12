@@ -1,4 +1,4 @@
-CC=clang
+CC=clang++
 CFLAGS=-g -std=c++1z -Werror -Wextra -Wall -pedantic
 LFLAGS=-lprotobuf -lpthread -lstdc++
 

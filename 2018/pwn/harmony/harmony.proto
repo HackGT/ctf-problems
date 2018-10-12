@@ -80,6 +80,10 @@ message IsTrialUserResponse {
     string msg = 1;
 }
 
+message InvalidCommandResponse {
+    string msg = 1;
+}
+
 message Command {
     oneof payload {
         CreateUser create_user = 1;
@@ -96,5 +100,6 @@ message Command {
         GetInfoResponse get_info_response = 12;
         IsTrialUser is_trial_user = 13;
         IsTrialUserResponse is_trial_user_response = 14;
+        InvalidCommandResponse invalid_command_response = 15;
     }
 }
