@@ -1,3 +1,6 @@
+import threading
+import time
+
 import PyQt5.QtWidgets
 import PyQt5.QtGui
 
@@ -23,9 +26,8 @@ class LoginWindow(login_window.Ui_MainWindow):
 
         try:
             self.main_window.harmony.login(username, password)
-        except Exception:
-            raise
-            # TODO handle error
+        except Exception as e:
+            self.error_label.setText(str(e))
             return
         self.main_window.username = username
         self.main_window.switch_to_chat()
@@ -44,6 +46,7 @@ class RegisterWindow(register_window.Ui_MainWindow):
     def load_hooks(self):
         self.register_2.clicked.connect(self.handle_register)
         self.password.returnPressed.connect(self.handle_register)
+        self.cancel.clicked.connect(self.main_window.switch_to_login)
 
     def handle_register(self):
         username = self.username.text()
@@ -64,9 +67,24 @@ class ChatWindow(chat_window.Ui_MainWindow):
         self.load_srv_info()
         self.room_list.setCurrentRow(0)
         self.room_clicked(self.room_list.currentItem())
+        self.get_messages()
+        self.active = True
+        self.update_thread = threading.Thread(target=self.update_thread)
+
+    def update_thread(self):
+        while self.active:
+            self.load_srv_info()
+            self.get_messages()
+            time.sleep(1)
+
+    def _logout(self):
+        self.active = False
+        if self.update_thread.is_alive():
+            self.update_thread.join()
+        self.main_window.logout()
 
     def load_hooks(self):
-        self.logout.clicked.connect(self.main_window.logout)
+        self.logout.clicked.connect(self._logout)
         self.new_msg.returnPressed.connect(self.send_message)
         self.send.clicked.connect(self.send_message)
 
@@ -91,7 +109,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
         self.get_messages()
 
     def load_srv_info(self):
-        # TODO call periodically, get new users...
         self.main_window.harmony.get_info()
         self.room_list.clear()
         self.people_list.clear()
@@ -99,7 +116,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
         self.people_list.addItems(self.main_window.harmony.usernames)
 
     def get_messages(self):
-        # TODO run this in new thread, lock harmony instance.
         self.main_window.harmony.get_messages()
 
     def _display_room(self, room):
@@ -123,13 +139,11 @@ class ChatWindow(chat_window.Ui_MainWindow):
     def room_clicked(self, room):
         self.people_list.clearSelection()
         self.people_list.setCurrentRow(-1)
-        self.get_messages()
         self._display_room(room.text())
 
     def user_clicked(self, user):
         self.room_list.clearSelection()
         self.room_list.setCurrentRow(-1)
-        self.get_messages()
         self._display_dm(user.text())
 
 
@@ -151,7 +165,6 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         self.ui = ChatWindow(self)
 
     def logout(self):
-        # TODO send logout
         self.switch_to_login()
 
     def exit(self):

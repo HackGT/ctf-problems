@@ -2,6 +2,7 @@ import collections
 import functools
 import socket
 import struct
+import threading
 
 import harmony_pb2
 
@@ -12,6 +13,13 @@ def auth(func):
         if self.token is None:
             raise RuntimeError('Must be authenticated')
         return func(self, *args, **kwargs)
+    return inner
+
+def locked(func):
+    @functools.wraps(func)
+    def inner(self, *args, **kwargs):
+        with self.lock:
+            return func(self, *args, **kwargs)
     return inner
 
 
@@ -25,6 +33,7 @@ class HarmonyConnection:
         self.groups = []
         self.group_msgs = {}
         self.direct_msgs = {}
+        self.lock = threading.Lock()
 
     def create_user(self, username, password):
         if len(username) > 100 or len(password) > 100:
@@ -53,7 +62,7 @@ class HarmonyConnection:
         if resp.login_response.success:
             self.token = resp.login_response.token
         else:
-            raise RuntimeError(resp.create_user_response.msg)
+            raise RuntimeError(resp.login_response.token)
         self.username = username
         return True
 
@@ -134,6 +143,7 @@ class HarmonyConnection:
         self.groups = resp.get_info_response.groups
         return True
 
+    @locked
     def send_cmd(self, cmd):
         cmd_bytes = cmd.SerializeToString()
         send_len = struct.pack('>H', len(cmd_bytes))

@@ -25,10 +25,12 @@ Harmony::login(const std::string& username, const std::string& password, std::st
 {
     auto user_iter = user_name_map.find(username);
     if (user_iter == user_name_map.end()) {
+        out_token = "Bad username or password";
         return false;
     }
 
     if (!user_iter->second->authenticate(password)) {
+        out_token = "Bad username or password";
         return false;
     }
 
