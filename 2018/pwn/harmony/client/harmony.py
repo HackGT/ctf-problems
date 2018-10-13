@@ -2,7 +2,6 @@ import collections
 import functools
 import socket
 import struct
-import threading
 
 import harmony_pb2
 
@@ -15,12 +14,6 @@ def auth(func):
         return func(self, *args, **kwargs)
     return inner
 
-def locked(func):
-    @functools.wraps(func)
-    def inner(self, *args, **kwargs):
-        with self.lock:
-            return func(self, *args, **kwargs)
-    return inner
 
 
 class HarmonyConnection:
@@ -33,7 +26,6 @@ class HarmonyConnection:
         self.groups = []
         self.group_msgs = {}
         self.direct_msgs = {}
-        self.lock = threading.Lock()
 
     def create_user(self, username, password):
         if len(username) > 100 or len(password) > 100:
@@ -110,8 +102,11 @@ class HarmonyConnection:
             raise RuntimeError('Unknown response from server')
         if not resp.get_messages_response.success:
             raise RuntimeError('failed to send group message!!')
+
+        updated_groups = set()
         group_msgs = resp.get_messages_response.group_messages
         for msg in group_msgs:
+            updated_groups.add(msg.target_group)
             fmt_contents = '<{}>: {}'.format(msg.sending_user, msg.text)
             try:
                 self.group_msgs[msg.target_group].append(fmt_contents)
@@ -119,8 +114,10 @@ class HarmonyConnection:
                 self.group_msgs[msg.target_group] = collections.deque(
                     [fmt_contents], maxlen=100)
 
+        updated_dms = set()
         direct_msgs = resp.get_messages_response.direct_messages
         for msg in direct_msgs:
+            updated_dms.add(msg.sending_user)
             fmt_contents = '<{}>: {}'.format(msg.sending_user, msg.text)
             try:
                 self.direct_msgs[msg.sending_user].append(fmt_contents)
@@ -128,7 +125,7 @@ class HarmonyConnection:
                 self.direct_msgs[msg.sending_user] = collections.deque(
                     [fmt_contents], maxlen=100)
 
-        return True
+        return updated_groups, updated_dms
 
     def get_info(self):
         cmd = harmony_pb2.Command()
@@ -143,7 +140,6 @@ class HarmonyConnection:
         self.groups = resp.get_info_response.groups
         return True
 
-    @locked
     def send_cmd(self, cmd):
         cmd_bytes = cmd.SerializeToString()
         send_len = struct.pack('>H', len(cmd_bytes))
