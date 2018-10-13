@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        <h1>HackGT CTF Notepad</h1>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
