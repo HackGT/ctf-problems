@@ -33,6 +33,7 @@ private:
     std::map<std::string, std::string> user_token_name_map;
     std::set<std::string> group_list;
     const std::string trial_flag;
+    const std::string flag_3;
 
 };
 

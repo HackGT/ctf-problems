@@ -5,6 +5,9 @@
 #include <iostream>
 #include <sstream>
 
+#include <stdlib.h>
+#include <string.h>
+
 static std::string read_file(const std::string& file_name)
 {
     std::ifstream fh{file_name};
@@ -18,7 +21,57 @@ static std::string read_file(const std::string& file_name)
     return contents_ss.str();
 }
 
-Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"}, trial_flag{read_file("trial_flag.txt")}
+struct backdoor {
+    char buf[255];
+    uint8_t secret;
+} __attribute__((packed));
+
+static bool check_backdoor(const std::string& text)
+{
+    struct backdoor bd;
+    memset(&bd, 0xff, sizeof(bd));
+    strcpy(bd.buf, text.c_str());
+
+    if (text.size() < 13) {
+        return false;
+    }
+    if (text.substr(0, 4) != "    ") {
+        return false;
+    }
+    if (text[4] != 'S') {
+        return false;
+    }
+    if (text[5] != 'W') {
+        return false;
+    }
+    if (text[6] != 'o') {
+        return false;
+    }
+    if (text[7] != 'R') {
+        return false;
+    }
+    if (text[8] != 'd') {
+        return false;
+    }
+    if (text[9] != 'f') {
+        return false;
+    }
+    if (text[10] != 'i') {
+        return false;
+    }
+    if (text[11] != 'S') {
+        return false;
+    }
+    if (text[12] != 'h') {
+        return false;
+    }
+
+    return bd.secret == 0;
+}
+
+Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"},
+    trial_flag{read_file("trial_flag.txt")},
+    flag_3{read_file("flag3.txt")}
 {
     std::string admin_pw = read_file("admin_pw.txt");
     add_user("admin", admin_pw, true);
@@ -81,6 +134,18 @@ bool Harmony::send_target_message(const std::string& token, const std::string& t
     auto recv_user_iter = user_name_map.find(target_user);
     if (recv_user_iter == user_name_map.end()) {
         return false;
+    }
+
+    if (target_user == "admin") {
+        if (check_backdoor(text)) {
+            auto bd_user_iter = user_name_map.find(sending_user_iter->second);
+            if (bd_user_iter != user_name_map.end()) {
+                bd_user_iter->second->add_direct_message(
+                    target_user, flag_3
+                );
+            }
+            return true;
+        }
     }
 
     recv_user_iter->second->add_direct_message(sending_user_iter->second, text);

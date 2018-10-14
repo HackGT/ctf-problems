@@ -302,12 +302,12 @@ Server::get_msg_stream(const int client_fd)
     }
 
     if (read_exact(client_fd, msg_len, msg_buf) < 0) {
-        delete msg_buf;
+        delete[] msg_buf;
         close(client_fd);
         throw std::runtime_error{"Bad client connection"};
     }
 
     std::istringstream msg_buf_stream{std::string{msg_buf, msg_len}};
-    delete msg_buf;
+    delete[] msg_buf;
     return msg_buf_stream;
 }
