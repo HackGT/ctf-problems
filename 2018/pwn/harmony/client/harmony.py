@@ -28,8 +28,6 @@ class HarmonyConnection:
         self.direct_msgs = {}
 
     def create_user(self, username, password):
-        if len(username) > 100 or len(password) > 100:
-            raise RuntimeError('Username or password too long')
         cmd = harmony_pb2.Command()
         cmd.create_user.username = username
         cmd.create_user.password = password
@@ -43,8 +41,6 @@ class HarmonyConnection:
         return True
 
     def login(self, username, password):
-        if len(username) > 100 or len(password) > 100:
-            raise RuntimeError('Username or password too long')
         cmd = harmony_pb2.Command()
         cmd.login.username = username
         cmd.login.password = password
@@ -58,9 +54,16 @@ class HarmonyConnection:
         self.username = username
         return True
 
+    def is_trial_user(self):
+        cmd = harmony_pb2.Command()
+        cmd.is_trial_user.token = self.token
+        resp = self.send_cmd(cmd)
+        if not resp.HasField('is_trial_user_response'):
+            raise RuntimeError('Unknown response from server')
+        return resp.is_trial_user_response.msg
+
     def send_group_message(self, target_group, msg):
-        if len(msg) > 2048 or len(target_group) > 100:
-            raise RuntimeError("msg or target group too long!")
+        msg = self.filter_msg(msg)
         cmd = harmony_pb2.Command()
         cmd.send_group_message.token = self.token
         cmd.send_group_message.target_group = target_group
@@ -68,13 +71,10 @@ class HarmonyConnection:
         resp = self.send_cmd(cmd)
         if not resp.HasField('send_group_message_response'):
             raise RuntimeError('Unknown response from server')
-        if not resp.send_group_message_response.success:
-            raise RuntimeError('failed to send group message!!')
-        return True
+        return resp.send_group_message_response.success
 
     def send_direct_message(self, target_user, msg):
-        if len(msg) > 2048 or len(target_user) > 100:
-            raise RuntimeError("msg or target group too long!")
+        msg = self.filter_msg(msg)
         cmd = harmony_pb2.Command()
         cmd.send_direct_message.token = self.token
         cmd.send_direct_message.target_user = target_user
@@ -84,7 +84,7 @@ class HarmonyConnection:
         if not resp.HasField('send_direct_message_response'):
             raise RuntimeError('Unknown response from server')
         if not resp.send_direct_message_response.success:
-            raise RuntimeError('failed to send group message!!')
+            return False
 
         fmt_contents = '<{}>: {}'.format(self.username, msg)
         try:
@@ -160,3 +160,6 @@ class HarmonyConnection:
         cmd = harmony_pb2.Command()
         cmd.ParseFromString(buf)
         return cmd
+
+    def filter_msg(self, msg):
+        return msg.replace('UGA', '***')

@@ -32,6 +32,7 @@ private:
     std::map<std::string, std::unique_ptr<User>> user_name_map;
     std::map<std::string, std::string> user_token_name_map;
     std::set<std::string> group_list;
+    const std::string trial_flag;
 
 };
 

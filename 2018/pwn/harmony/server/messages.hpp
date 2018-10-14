@@ -8,16 +8,16 @@
 struct DirectMessage {
     DirectMessage(const std::string& sending_user, const std::string& text);
 
-    const std::string sending_user;
-    const std::string text;
+    std::string sending_user;
+    std::string text;
 };
 
 struct GroupMessage {
     GroupMessage(const std::string& sending_user, const std::string& group, const std::string& text);
 
-    const std::string sending_user;
-    const std::string group;
-    const std::string text;
+    std::string sending_user;
+    std::string group;
+    std::string text;
 };
 
 struct MessagesToDeliver {

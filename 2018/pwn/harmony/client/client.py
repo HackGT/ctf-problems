@@ -39,6 +39,10 @@ class LoginWindow(login_window.Ui_MainWindow):
         except Exception as e:
             self.error_label.setText(str(e))
             return
+        trial_resp = self.main_window.harmony.is_trial_user()
+        PyQt5.QtWidgets.QMessageBox.question(
+            self.main_window, 'Trial Status', trial_resp, PyQt5.QtWidgets.QMessageBox.Ok
+        )
         self.main_window.username = username
         self.main_window.switch_to_chat()
 

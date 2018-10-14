@@ -3,7 +3,7 @@ syntax = "proto3";
 message CreateUser {
     string username = 1;
     string password = 2;
-    bool trial_user = 3;
+    bool unused = 3;
 }
 
 message CreateUserResponse {

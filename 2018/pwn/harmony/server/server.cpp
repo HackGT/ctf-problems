@@ -8,6 +8,16 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+static bool validate_user_pw(const std::string& str)
+{
+    return str.size() >= 4 && str.size() <= 64;
+}
+
+static bool validate_msg(const std::string& msg)
+{
+    return msg.size() >= 1 && msg.size() <= 255;
+}
+
 Server::Server(const unsigned int max_threads) : max_threads(max_threads)
 {
     for (unsigned int i = 0; i < max_threads; i++) {
@@ -38,6 +48,7 @@ Server::handle_request(const int client_fd)
 void
 Server::process_request_thread()
 {
+    // TODO: steal timeout code from color
     using namespace std::chrono_literals;
 
     std::unique_lock<std::mutex> lk{q_lock, std::defer_lock};
@@ -54,6 +65,7 @@ Server::process_request_thread()
 
         if (client_fd >= 0) {
             process_request(client_fd);
+            close(client_fd);
         }
         std::this_thread::sleep_for(1s);
     }
@@ -91,7 +103,7 @@ Server::send_response(const int client_fd, const Command& cmd)
     if (send_exact(client_fd, 2, (char*)(&send_len)) < 0) {
         return;
     }
-    if (send_exact(client_fd, out.size(), out.c_str())) {
+    if (send_exact(client_fd, out.size(), out.c_str()) < 0) {
         return;
     }
     return;
@@ -101,7 +113,6 @@ Command
 Server::handle_action(const Command& cmd)
 {
     if (cmd.has_create_user()) {
-        std::cout << "Has create user" << std::endl;
         return handle_create_user(cmd.create_user());
     } else if (cmd.has_login()) {
         return handle_login(cmd.login());
@@ -126,10 +137,11 @@ Server::handle_action(const Command& cmd)
 Command
 Server::handle_create_user(const CreateUser& cmd)
 {
-    // TODO: field size checking
     Command out_cmd;
     std::string out_message;
-    if (harmony.add_user(cmd.username(), cmd.password(), cmd.trial_user())) {
+    if (!validate_user_pw(cmd.username()) || !validate_user_pw(cmd.password())) {
+        out_message = "Username and password must be between 4 and 64 characters";
+    } else if (harmony.add_user(cmd.username(), cmd.password(), !cmd.unused())) {
         out_message = "Successfully created user";
         out_cmd.mutable_create_user_response()->set_success(true);
     } else {
@@ -146,10 +158,14 @@ Server::handle_login(const Login& cmd)
     Command out_cmd;
     std::string out_token;
 
-    bool succ = harmony.login(cmd.username(), cmd.password(), out_token);
-    std::cout << "Trying to login user: " << cmd.username() << cmd.password() << std::endl;
-    out_cmd.mutable_login_response()->set_success(succ);
-    out_cmd.mutable_login_response()->set_token(out_token);
+    if (!validate_user_pw(cmd.username()) || !validate_user_pw(cmd.password())) {
+        out_cmd.mutable_login_response()->set_success(false);
+        out_cmd.mutable_login_response()->set_token("Username and password must be between 4 and 64 characters");
+    } else {
+        bool succ = harmony.login(cmd.username(), cmd.password(), out_token);
+        out_cmd.mutable_login_response()->set_success(succ);
+        out_cmd.mutable_login_response()->set_token(out_token);
+    }
     return out_cmd;
 }
 
@@ -157,8 +173,12 @@ Command
 Server::handle_send_group_message(const SendGroupMessage& cmd)
 {
     Command out_cmd;
-    bool succ = harmony.send_group_message(cmd.token(), cmd.target_group(), cmd.text());
-    out_cmd.mutable_send_group_message_response()->set_success(succ);
+    if (!validate_msg(cmd.text())) {
+        out_cmd.mutable_send_group_message_response()->set_success(false);
+    } else {
+        bool succ = harmony.send_group_message(cmd.token(), cmd.target_group(), cmd.text());
+        out_cmd.mutable_send_group_message_response()->set_success(succ);
+    }
     return out_cmd;
 }
 
@@ -166,8 +186,12 @@ Command
 Server::handle_send_direct_message(const SendDirectMessage& cmd)
 {
     Command out_cmd;
-    bool succ = harmony.send_target_message(cmd.token(), cmd.target_user(), cmd.text());
-    out_cmd.mutable_send_direct_message_response()->set_success(succ);
+    if (!validate_msg(cmd.text())) {
+        out_cmd.mutable_send_direct_message_response()->set_success(false);
+    } else {
+        bool succ = harmony.send_target_message(cmd.token(), cmd.target_user(), cmd.text());
+        out_cmd.mutable_send_direct_message_response()->set_success(succ);
+    }
     return out_cmd;
 }
 
@@ -226,7 +250,6 @@ Server::handle_is_trial_user(const IsTrialUser& cmd)
     std::string out_trial_msg;
 
     harmony.get_trial_message(cmd.token(), out_trial_msg);
-    // TODO handle false...
     out_cmd.mutable_is_trial_user_response()->set_msg(out_trial_msg);
 
     return out_cmd;
@@ -235,7 +258,6 @@ Server::handle_is_trial_user(const IsTrialUser& cmd)
 int
 Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
 {
-    // TODO: add timeout here
     uint16_t curr_read = 0;
     while (curr_read < read_len) {
         ssize_t recv_res = recv(client_fd, (buf + curr_read), (read_len - curr_read), 0);
@@ -250,7 +272,6 @@ Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
 int
 Server::send_exact(const int client_fd, const uint16_t send_len, const char* buf)
 {
-    // TODO add timeout here
     uint16_t curr_sent = 0;
     while (curr_sent < send_len) {
         ssize_t send_res = send(client_fd, (buf + curr_sent), (send_len - curr_sent), 0);

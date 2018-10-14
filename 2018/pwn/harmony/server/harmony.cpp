@@ -1,18 +1,32 @@
 #include "harmony.hpp"
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
-Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes", "Dragons"}
+static std::string read_file(const std::string& file_name)
 {
-    add_user("admin", "admin_password", true);
-    // TODO read file and get secret message
+    std::ifstream fh{file_name};
+    if (!fh.is_open()) {
+        std::stringstream e_ss;
+        e_ss << "Cannot find file " << file_name;
+        throw std::runtime_error(e_ss.str());
+    }
+    std::stringstream contents_ss;
+    contents_ss << fh.rdbuf();
+    return contents_ss.str();
+}
+
+Harmony::Harmony() : group_list{"Hacking", "Off Topic", "Memes"}, trial_flag{read_file("trial_flag.txt")}
+{
+    std::string admin_pw = read_file("admin_pw.txt");
+    add_user("admin", admin_pw, true);
 }
 
 bool
 Harmony::add_user(const std::string& username, const std::string& password, const bool trial_user)
 {
-    std::cout << "trying to add " << username << std::endl;
     if (user_name_map.find(username) != user_name_map.end()) {
         return false;
     }
@@ -120,7 +134,7 @@ Harmony::get_trial_message(const std::string& token, std::string& out_trial_mess
     if (user_name_map.at(user_iter->second)->is_trial_user()) {
         out_trial_message = "You are currently using a trial version of Harmony";
     } else {
-        out_trial_message = "TODO read from file";
+        out_trial_message = trial_flag;
     }
     return true;
 }
@@ -128,7 +142,6 @@ Harmony::get_trial_message(const std::string& token, std::string& out_trial_mess
 std::string
 Harmony::gen_random_token() const
 {
-    // TODO fixup?
     auto randchar = []() -> char
     {
         const char charset[] =
