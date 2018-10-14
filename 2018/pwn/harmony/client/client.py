@@ -1,4 +1,5 @@
 import functools
+import sys
 
 import PyQt5.QtWidgets
 import PyQt5.QtGui
@@ -238,7 +239,12 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
 
 
 def main():
-    harmony_instance = harmony.HarmonyConnection('localhost', 11111)
+    if len(sys.argv) >= 2:
+        host = sys.argv[1]
+    else:
+        print('Usage: python3 client.py SERVER_IP')
+        return -1
+    harmony_instance = harmony.HarmonyConnection(host, 11111)
     app = PyQt5.QtWidgets.QApplication(['Harmony'])
     window = MainWindow(harmony_instance)
     window.show()
