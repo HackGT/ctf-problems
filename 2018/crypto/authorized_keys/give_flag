@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+cat /root/flag.txt
