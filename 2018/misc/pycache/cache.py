@@ -164,7 +164,7 @@ class Cache:
 
 
 def main():
-    p = Processor('./flag.txt')
+    p = Processor('/pycache/flag.txt')
     while True:
         try:
             sys.stdout.flush()
@@ -203,4 +203,7 @@ def main():
             return
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception:
+        pass

