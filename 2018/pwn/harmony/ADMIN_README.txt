@@ -19,8 +19,10 @@ Dockerfile.admin ENTRYPOINT parameter to use the IP address rather than
 "localhost".
 
 Competitors should be given the COMPETITORS_README.txt file, the
-requirements.txt file, the client directory, and the server binary
+requirements.txt file, the harmony.proto the client directory, and the server binary
 (server/harmony). Server source code should not be distributed.
+You should build system before distributing the client folder, as this will create
+the protbuf files and QT UI files.
 
 The admin folder has a tests.py file that will demonstrate the exploits. The
 modified harmony.py file in the admin directory will create the client user as
