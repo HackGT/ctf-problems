@@ -8,6 +8,7 @@ def conv(r, g, b):
     cmin = min(r, g, b)
     delta = cmax - cmin
 
+
     if delta == 0:
         h = 0
     elif cmax == r:
@@ -23,6 +24,7 @@ def conv(r, g, b):
         s = delta / cmax
 
     v = cmax
+
 
     h = int(h * 255 / 360)
     s = int(s * 255)
@@ -41,9 +43,6 @@ def main():
     for px in im.getdata():
         data = conv(*px)
         data = (data[0] / 360, data[1] / 255, data[2] / 255)
-        print(px)
-        print(data)
-        print(colorsys.rgb_to_hsv(data[0] / 255, data[1] / 255, data[2] / 255))
 
 def foo(r, g, b):
     r, g, b = m[(r, g, b)]
@@ -58,4 +57,4 @@ else:
         print(r)
         for g in range(256):
             for b in range(256):
-                m[(r, g, b)] = conv(r, g, b)
+                m[conv(r, g, b)] = (r, g, b)

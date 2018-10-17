@@ -33,11 +33,6 @@ void convert_image(uint8_t* rgb_buf, uint32_t pixel_len)
 {
     for (uint32_t i = 0; i < pixel_len; i++)
     {
-        if (i == 0) {
-            printf("%d %d %d\n",
-                    rgb_buf[i * 3], rgb_buf[i * 3 + 1], rgb_buf[i * 3 + 2]
-                  );
-        }
         double r = rgb_buf[i * 3] / 255.0;
         double g = rgb_buf[i * 3 + 1] / 255.0;
         double b = rgb_buf[i * 3 + 2] / 255.0;
@@ -85,12 +80,6 @@ void convert_image(uint8_t* rgb_buf, uint32_t pixel_len)
         h = (uint8_t)(h * 255.0 / 360.0);
         uint8_t s = (uint8_t)(s_f * 255);
         uint8_t v = (uint8_t)(cmax * 255);
-
-        if (i == 0) {
-            printf("%d %d %d -> %d %d %d\n",
-                    rgb_buf[i * 3], rgb_buf[i * 3 + 1], rgb_buf[i * 3 + 2],
-                    h, s, v);
-        }
 
         hsv_buf[i * 3] = h;
         hsv_buf[i * 3 + 1] = s;
