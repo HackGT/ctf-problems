@@ -1,0 +1,13 @@
+Spooktober Puzzle
+flag= hackgt{hesleepbeneaththewaves}
+
+format:
+find differences between given text and source text,
+gives ahgmge{ssxnxljmlhxhxjtspkfxxz}
+vingere cipher it,
+key= thecallofcthulhu or since you know the format of the flag, you can work back from that
+
+Resources used:
+text from: https://archive.org/stream/CallOfCthulhu/The_Call_of_Cthulhu_-_Lovecraft_djvu.txt
+difference finder: https://www.diffchecker.com/diff
+vignere cipher: https://www.dcode.fr/vigenere-cipher

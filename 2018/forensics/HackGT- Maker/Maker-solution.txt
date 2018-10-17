@@ -1,0 +1,12 @@
+Maker Puzzle
+flag= hackgt(Smitty-Werbenjagermanjensen)
+*CNC does not allow for {}
+
+format:
+given txt file contains G-code
+use any g-code viewer/ machine simulator to run it
+CNC will carve out flag
+
+Resources used:
+to convert text to g-code: http://www.microtechstelladata.com/TextToNCcode.aspx
+CNC viewer: https://ncviewer.com/
