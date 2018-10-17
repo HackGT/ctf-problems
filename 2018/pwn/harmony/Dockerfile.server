@@ -1,0 +1,8 @@
+FROM ubuntu:18.04
+WORKDIR /harmony
+
+RUN apt update && apt install -y libprotobuf-dev
+
+COPY . /harmony
+
+ENTRYPOINT ["/harmony/server/harmony"]

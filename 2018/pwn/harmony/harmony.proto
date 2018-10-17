@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+message CreateUser {
+    string username = 1;
+    string password = 2;
+    bool unused = 3;
+}
+
+message CreateUserResponse {
+    bool success = 1;
+    string msg = 2;
+}
+
+message Login {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    bool success = 1;
+    string token = 2;
+}
+
+message SendGroupMessage {
+    string token = 1;
+    string target_group = 2;
+    string text = 3;
+}
+
+message SendGroupMessageResponse {
+    bool success = 1;
+}
+
+message SendDirectMessage {
+    string token = 1;
+    string target_user = 2;
+    string text = 3;
+}
+
+message SendDirectMessageResponse {
+    bool success = 1;
+}
+
+message GetMessages {
+    string token = 1;
+}
+
+message GetGroupMessageResponse {
+    string target_group = 1;
+    string sending_user = 2;
+    string text = 3;
+}
+
+message GetDirectMessageResponse {
+    string sending_user = 1;
+    string text = 2;
+}
+
+message GetMessagesResponse {
+    bool success = 1;
+    repeated GetGroupMessageResponse group_messages = 2;
+    repeated GetDirectMessageResponse direct_messages = 3;
+}
+
+message GetInfo {
+    string token = 1;
+}
+
+message GetInfoResponse {
+    bool success = 1;
+    repeated string usernames = 2;
+    repeated string groups = 3;
+}
+
+message IsTrialUser {
+    string token = 1;
+}
+
+message IsTrialUserResponse {
+    string msg = 1;
+}
+
+message InvalidCommandResponse {
+    string msg = 1;
+}
+
+message Command {
+    oneof payload {
+        CreateUser create_user = 1;
+        CreateUserResponse create_user_response = 2;
+        Login login = 3;
+        LoginResponse login_response = 4;
+        SendGroupMessage send_group_message = 5;
+        SendGroupMessageResponse send_group_message_response = 6;
+        SendDirectMessage send_direct_message = 7;
+        SendDirectMessageResponse send_direct_message_response = 8;
+        GetMessages get_messages = 9;
+        GetMessagesResponse get_messages_response = 10;
+        GetInfo get_info = 11;
+        GetInfoResponse get_info_response = 12;
+        IsTrialUser is_trial_user = 13;
+        IsTrialUserResponse is_trial_user_response = 14;
+        InvalidCommandResponse invalid_command_response = 15;
+    }
+}
