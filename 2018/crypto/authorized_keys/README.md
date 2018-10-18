@@ -7,3 +7,5 @@ Log in to the server as `gburdell`.
 
 There's a Dockerfile that sets up the SSH server.
 The `authorized_keys` file needs to be extracted from the build log and included as an attachment in ctfd.
+
+200
