@@ -116,6 +116,7 @@ Server::send_response(const int client_fd, const Command& cmd)
 Command
 Server::handle_action(const Command& cmd)
 {
+    std::lock_guard<std::mutex> guard{harmony_lock};
     if (cmd.has_create_user()) {
         return handle_create_user(cmd.create_user());
     } else if (cmd.has_login()) {
@@ -269,7 +270,7 @@ Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
         if ((std::chrono::system_clock::now() - start_time) > 1s) {
             return -1;
         }
-        ssize_t recv_res = recv(client_fd, (buf + curr_read), (read_len - curr_read), 0);
+        ssize_t recv_res = recv(client_fd, (buf + curr_read), (read_len - curr_read), MSG_NOSIGNAL);
         if (recv_res < 0) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 return -1;
@@ -292,7 +293,7 @@ Server::send_exact(const int client_fd, const uint16_t send_len, const char* buf
         if ((std::chrono::system_clock::now() - start_time) > 1s) {
             return -1;
         }
-        ssize_t send_res = send(client_fd, (buf + curr_sent), (send_len - curr_sent), 0);
+        ssize_t send_res = send(client_fd, (buf + curr_sent), (send_len - curr_sent), MSG_NOSIGNAL);
         if (send_res < 0) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 return -1;
