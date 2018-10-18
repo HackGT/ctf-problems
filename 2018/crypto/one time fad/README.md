@@ -8,3 +8,5 @@ Decrypt the flag using this broken decryption service.
 
 ## NOTES
 You'll probably have a better time with this if you're using python 3.
+
+100
