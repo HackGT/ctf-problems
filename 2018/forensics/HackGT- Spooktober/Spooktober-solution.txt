@@ -11,3 +11,5 @@ Resources used:
 text from: https://archive.org/stream/CallOfCthulhu/The_Call_of_Cthulhu_-_Lovecraft_djvu.txt
 difference finder: https://www.diffchecker.com/diff
 vignere cipher: https://www.dcode.fr/vigenere-cipher
+
+50
