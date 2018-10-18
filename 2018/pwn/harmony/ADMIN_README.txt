@@ -28,3 +28,6 @@ The admin folder has a tests.py file that will demonstrate the exploits. The
 modified harmony.py file in the admin directory will create the client user as
 a non trial user and strip the client side bad word filtering. This SHOULD NOT
 be given to the competitors.
+
+
+10/50/100
