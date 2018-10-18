@@ -27,3 +27,6 @@ mvr $dst_reg, $src_reg - Move the value in $src_reg into register $dst_reg.
 
 
 Each time you issue a command, PyCacheSim will reply with the amount of time it took to execute the command.
+
+
+100
