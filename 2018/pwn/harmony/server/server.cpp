@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -48,7 +49,6 @@ Server::handle_request(const int client_fd)
 void
 Server::process_request_thread()
 {
-    // TODO: steal timeout code from color
     using namespace std::chrono_literals;
 
     std::unique_lock<std::mutex> lk{q_lock, std::defer_lock};
@@ -74,6 +74,10 @@ Server::process_request_thread()
 void
 Server::process_request(const int client_fd)
 {
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 200;
+    setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)(&tv), sizeof(tv));
     try {
         std::istringstream msg_buf_stream = get_msg_stream(client_fd);
         Command cmd = parse_protobuf_msg(&msg_buf_stream);
@@ -258,11 +262,20 @@ Server::handle_is_trial_user(const IsTrialUser& cmd)
 int
 Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
 {
+    using namespace std::chrono_literals;
     uint16_t curr_read = 0;
+    auto start_time = std::chrono::system_clock::now();
     while (curr_read < read_len) {
+        if ((std::chrono::system_clock::now() - start_time) > 1s) {
+            return -1;
+        }
         ssize_t recv_res = recv(client_fd, (buf + curr_read), (read_len - curr_read), 0);
         if (recv_res < 0) {
-            return -1;
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                return -1;
+            } else {
+                continue;
+            }
         }
         curr_read += recv_res;
     }
@@ -272,11 +285,20 @@ Server::read_exact(const int client_fd, const uint16_t read_len, char* buf)
 int
 Server::send_exact(const int client_fd, const uint16_t send_len, const char* buf)
 {
+    using namespace std::chrono_literals;
     uint16_t curr_sent = 0;
+    auto start_time = std::chrono::system_clock::now();
     while (curr_sent < send_len) {
+        if ((std::chrono::system_clock::now() - start_time) > 1s) {
+            return -1;
+        }
         ssize_t send_res = send(client_fd, (buf + curr_sent), (send_len - curr_sent), 0);
         if (send_res < 0) {
-            return -1;
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                return -1;
+            } else {
+                continue;
+            }
         }
         curr_sent += send_res;
     }
