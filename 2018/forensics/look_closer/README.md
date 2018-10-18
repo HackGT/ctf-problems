@@ -8,3 +8,5 @@ Examine `look_closer.docx` and find the flag.
 ```bash
 ./create.py
 ```
+
+100
