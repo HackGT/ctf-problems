@@ -10,3 +10,5 @@ CNC will carve out flag
 Resources used:
 to convert text to g-code: http://www.microtechstelladata.com/TextToNCcode.aspx
 CNC viewer: https://ncviewer.com/
+
+20/50
