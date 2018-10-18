@@ -72,38 +72,32 @@ class ChatWindow(chat_window.Ui_MainWindow):
         self.load_hooks()
         self.room_list.setCurrentRow(0)
 
-        # self.updater_thread = self.Updater(self)
-        # self.updater_thread.get_messages.connect(self.get_messages)
-        # self.updater_thread.load_srv_info.connect(self.load_srv_info)
-        # self.updater_thread.start()
         self.updater_thread = PyQt5.QtCore.QThread()
         self.worker = self.Updater(self)
         self.worker.moveToThread(self.updater_thread)
-        self.updater_thread.started.connect(self.worker.run)
         self.updater_thread.start()
 
+        self.qtimer = PyQt5.QtCore.QTimer()
+        self.qtimer.timeout.connect(self.worker.run_slot)
+        self.qtimer.setInterval(1000)
+        self.qtimer.start()
+
     class Updater(PyQt5.QtCore.QObject):
+        run_slot = PyQt5.QtCore.pyqtSignal()
+
         def __init__(self, chat_window):
             super().__init__()
             self.chat_window = chat_window
-            self.active = True
-            """
-            self.qtimer = PyQt5.QtCore.QTimer()
-            self.qtimer.timeout.connect(self.run)
-            self.qtimer.setInterval(1000)
-            """
+            self.run_slot.connect(self.update)
 
-        def run(self):
-            while self.active:
-                print('HERE')
-                self.chat_window.get_messages()
-                self.chat_window.load_srv_info()
+        def update(self):
+            self.chat_window.get_messages()
+            self.chat_window.load_srv_info()
 
-        def quit(self):
-            self.active = False
 
     def _logout(self):
-        self.updater_thread.quit()
+        self.qtimer.stop()
+        self.updater_thread.exit()
         while self.updater_thread.isRunning():
             pass
         self.main_window.logout()
