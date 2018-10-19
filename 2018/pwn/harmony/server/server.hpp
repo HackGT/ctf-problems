@@ -45,6 +45,6 @@ private:
 
     std::mutex q_lock;
     std::condition_variable q_cv;
-    std::atomic_flag harmony_lock = ATOMIC_FLAG_INIT;
+    std::mutex harmony_lock;
     bool running = true;
 };

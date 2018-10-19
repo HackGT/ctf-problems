@@ -1,5 +1,6 @@
 import functools
 import sys
+import time
 
 import PyQt5.QtWidgets
 import PyQt5.QtGui
@@ -7,16 +8,6 @@ import PyQt5.QtCore
 
 import harmony
 from ui import chat_window, login_window, register_window
-
-
-def locked(func):
-    @functools.wraps(func)
-    def inner(self, *args, **kwargs):
-        lock = PyQt5.QtCore.QMutexLocker(self.lock)
-        res = func(self, *args, **kwargs)
-        lock.unlock()
-        return res
-    return inner
 
 
 class LoginWindow(login_window.Ui_MainWindow):
@@ -78,38 +69,37 @@ class ChatWindow(chat_window.Ui_MainWindow):
         super(ChatWindow, self).__init__()
         self.main_window = main_window
         self.setupUi(main_window)
-        self.lock = PyQt5.QtCore.QMutex()
         self.load_hooks()
-        self.load_srv_info()
         self.room_list.setCurrentRow(0)
-        self.get_messages()
 
-        self.updater_thread = self.Updater()
-        self.updater_thread.get_messages.connect(self.get_messages)
-        self.updater_thread.load_srv_info.connect(self.load_srv_info)
+        self.updater_thread = PyQt5.QtCore.QThread()
+        self.worker = self.Updater(self)
+        self.worker.moveToThread(self.updater_thread)
         self.updater_thread.start()
 
-    class Updater(PyQt5.QtCore.QThread):
-        get_messages = PyQt5.QtCore.pyqtSignal()
-        load_srv_info = PyQt5.QtCore.pyqtSignal()
+        self.qtimer = PyQt5.QtCore.QTimer()
+        self.qtimer.timeout.connect(self.worker.run_slot)
+        self.qtimer.setInterval(1000)
+        self.qtimer.start()
 
-        def __init__(self):
+    class Updater(PyQt5.QtCore.QObject):
+        run_slot = PyQt5.QtCore.pyqtSignal()
+
+        def __init__(self, chat_window):
             super().__init__()
-            self.active = True
+            self.chat_window = chat_window
+            self.run_slot.connect(self.update)
 
-        def run(self):
-            while self.active:
-                self.get_messages.emit()
-                self.load_srv_info.emit()
-                self.sleep(1)
+        def update(self):
+            self.chat_window.get_messages()
+            self.chat_window.load_srv_info()
 
-        def quit(self):
-            self.active = False
 
     def _logout(self):
-        self.updater_thread.quit()
-        if self.updater_thread.isFinished():
-            self.updater_thread.join()
+        self.qtimer.stop()
+        self.updater_thread.exit()
+        while self.updater_thread.isRunning():
+            pass
         self.main_window.logout()
 
     def load_hooks(self):
@@ -120,7 +110,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
         self.room_list.itemClicked.connect(self.room_clicked)
         self.people_list.itemClicked.connect(self.user_clicked)
 
-    @locked
     def send_message(self, *args, **kwargs):
         msg = self.new_msg.text()
         if len(msg) == 0:
@@ -137,7 +126,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
 
         self.new_msg.clear()
 
-    @locked
     def load_srv_info(self):
         self.main_window.harmony.get_info()
         for group in self.main_window.harmony.groups:
@@ -150,7 +138,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
                 self.people_list.addItem(person)
         return
 
-    @locked
     def get_messages(self):
         color = PyQt5.QtGui.QColor(200, 200, 200)
         brush = PyQt5.QtGui.QBrush(color)
@@ -189,7 +176,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
             pass  # No dm data yet, empty is fine.
         self.message_list.scrollToBottom()
 
-    @locked
     def room_clicked(self, room):
         color = PyQt5.QtGui.QColor(255, 255, 255)
         brush = PyQt5.QtGui.QBrush(color)
@@ -201,7 +187,6 @@ class ChatWindow(chat_window.Ui_MainWindow):
                 if self.room_list.item(i).text() == room.text():
                     self.room_list.item(i).setBackground(brush)
 
-    @locked
     def user_clicked(self, user):
         color = PyQt5.QtGui.QColor(255, 255, 255)
         brush = PyQt5.QtGui.QBrush(color)
@@ -248,7 +233,10 @@ def main():
     app = PyQt5.QtWidgets.QApplication(['Harmony'])
     window = MainWindow(harmony_instance)
     window.show()
-    return app.exec_()
+    try:
+        return app.exec_()
+    except Exception as e:
+        print('Exited unexpectedly. Likely lost connection to server')
 
 
 if __name__ == '__main__':
