@@ -11,8 +11,8 @@ mysql -uroot -psuperlongpasswordxdddddddd -e "CREATE DATABASE phpmyadmin; GRANT 
 #!/bin/bash
 mysql -uroot -psuperlongpasswordxdddddddd -e "CREATE DATABASE user"
 mysql -uroot -psuperlongpasswordxdddddddd -e "USE user; CREATE TABLE users(username VARCHAR (20), password VARCHAR (20),asdf1 VARCHAR (20),asdf2 VARCHAR (20),asdf3 VARCHAR (20), PRIMARY KEY (username));"
-mysql -uroot -psuperlongpasswordxdddddddd -e "USE user; INSERT INTO users(username, password) VALUES ('burdell', 'Hfoiwa92hJELnwp2Owj5t');"
 mysql -uroot -psuperlongpasswordxdddddddd -e "USE user; SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO'; DELETE FROM users; INSERT INTO users VALUES ('administrator', SHA1('asdfhunter2'),'asdf','asdf','asdf')"
+mysql -uroot -psuperlongpasswordxdddddddd -e "USE user; SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO'; INSERT INTO users VALUES ('burdell', SHA1('Hfoiwa92hJELnwp2Owj5t'), 'i', 'am', 'glorious');"
 mysql -uroot -psuperlongpasswordxdddddddd -e "USE user; SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';"
 
 # Import the configuration storage database.
