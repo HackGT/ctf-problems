@@ -7,8 +7,6 @@ RUN apt-get update && apt-get install -y musl-tools
 
 COPY . /notepad
 
-RUN echo -n "secret_key = " >>Rocket.toml
-RUN openssl rand -base64 32 >>Rocket.toml
 RUN cargo build --release --target=x86_64-unknown-linux-musl
 
 FROM scratch
