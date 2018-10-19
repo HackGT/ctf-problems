@@ -3,9 +3,7 @@ import os
 import binascii
 
 key = bytearray()
-if 'flag' not in os.environ:
-    raise ValueError('You must set the \'flag\' environment variable before setting up the problem!')
-plainText = bytearray(os.environ['flag'], 'utf-8')
+plainText = open("flag.txt", "rb").read()
 size = len(plainText)
 
 for x in range(8 * len(plainText)):
