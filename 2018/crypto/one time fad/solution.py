@@ -1,4 +1,4 @@
-import broken_decrypt
+from pwn import *
 
 def deserialize_from_char_to_bin(bytes):
     binStr = ''
@@ -35,13 +35,22 @@ c = cF.read()
 cF.close()
 
 bin_dict = [0] * len(c) * 8
-for x in range(10000):
-    d = deserialize_from_char_to_bin(broken_decrypt.test(c))
-    for bin_char_ind in range(len(d)):
-        if d[bin_char_ind] == '0':
-            bin_dict[bin_char_ind] -= 1
-        else:
-            bin_dict[bin_char_ind] += 1
+for x in range(500):
+    print(x)
+    try:
+        s = remote("127.0.0.1", 3000)
+        s.recv(100)
+        s.send(c)
+        a = bytearray(s.recv(len(c)))
+        s.close()
+        d = deserialize_from_char_to_bin(a)
+        for bin_char_ind in range(len(d)):
+            if d[bin_char_ind] == '0':
+                bin_dict[bin_char_ind] -= 1
+            else:
+                bin_dict[bin_char_ind] += 1
+    except:
+        pass
 
 print(bin_dict)
 

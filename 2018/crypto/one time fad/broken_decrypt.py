@@ -32,23 +32,13 @@ def broken_decrypt(keyBinStr, value):
     return value ^ key ^ mystery
 
 def pipe(keyBinStr, reader, writer):
+    writer.write(b"Send me " + str(len(keyBinStr) // 8).encode() + b" bytes!\n")
+    writer.flush()
     c = reader.read(len(keyBinStr) // 8)
     outVal = broken_decrypt(keyBinStr, deserialize_to_value_from_bytes(c))
     outBytes = serialize_to_bytes_from_value(outVal, len(keyBinStr) // 8)
     writer.write(outBytes)
     writer.flush()
-
-## THIS IS USED TO VERIFY THE SOLUTION WORKS
-## DO NOT INCLUDE IN ACTUAL SCRIPT PROVIDED TO COMPETITORS
-'''
-def test(bytesIn):
-    kF = open('key', 'rb')
-    keyBinStr = kF.read()
-    kF.close()
-    outVal = broken_decrypt(keyBinStr, deserialize_to_value_from_bytes(bytesIn))
-    outBytes = serialize_to_bytes_from_value(outVal, len(keyBinStr) // 8)
-    return outBytes
-'''
 
 def main():
     k = open('key', 'rb')
