@@ -20,7 +20,7 @@ if($result = mysql_query($sql, $link)) {
         if ($row[0] === "burdell"){
             echo "FLAG: ".$flag;
         } else {
-			die("welcome ".$row[0]."! <br>");
+			echo "welcome ".$row[0]."! <br>";
 			die("srry but this page is for burdell only");
         }
     } else if(isset($_POST["username"]) && isset($_POST["password"]))
