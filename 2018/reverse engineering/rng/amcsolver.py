@@ -220,14 +220,19 @@ a = [
 ]
 ans = answer(a)
 print(ans)
-prob = 1
+numerator = 1
+denominator = 1
 byte = ""
 for p in ans:
     if p[0] > p[1]:
         byte = "0" + byte
-        prob *= p[0] / p[2]
+        numerator *= p[0]
     else:
         byte = "1" + byte
-        prob *= p[1] / p[2]
+        numerator *= p[1]
+    denominator *= p[2]
 print("byte: {:02x}".format(int(byte, 2)))
+f = fractions.Fraction(numerator, denominator)
+print(f)
+prob = f.numerator / f.denominator
 print(prob)
