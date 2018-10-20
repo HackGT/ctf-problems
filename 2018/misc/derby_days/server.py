@@ -52,7 +52,7 @@ def handle(conn, addr):
 
 if __name__ == "__main__":
     HOST = ''   # Symbolic name, meaning all available interfaces
-    PORT = 9002 # Arbitrary non-privileged port
+    PORT = 8989 # Arbitrary non-privileged port
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
