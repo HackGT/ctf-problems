@@ -4,7 +4,7 @@ import threading
 import socket
 import sys
 
-FLAG = "hackgt{NaNaNaNa_NaNaNaNa_hey_hey_hey____g0odby3}\n"
+FLAG = "hackgt{NaNaNaNa_NaNaNaNa_hey_hey_hey____g0odby3_98739827329384783}\n"
 
 INTRO_STR = """Hello user,
 welcome to a game of chance and skill.
