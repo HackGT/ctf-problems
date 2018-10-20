@@ -4,7 +4,7 @@ import threading
 import socket
 import sys
 
-FLAG = "hackgt{NaNaNaNa_NaNaNaNa_hey_hey_hey____g0odby3}\n"
+FLAG = "hackgt{NaNaNaNa_NaNaNaNa_hey_hey_hey____g0odby3_98739827329384783}\n"
 
 INTRO_STR = """Hello user,
 welcome to a game of chance and skill.
@@ -19,7 +19,7 @@ def handle(conn, addr):
     while True:
         if total_coins <= 0.0:
             conn.sendall(b"You LOSE...\n")
-            return
+            break
         if not total_coins < MAGIC:
             conn.sendall(FLAG.encode())
         y = random.randint(1, 1000) * 1.0
@@ -32,6 +32,9 @@ def handle(conn, addr):
             break
 
         if bet <= 0.0:
+            conn.sendall(b"Haha nice try...\n")
+            break
+        elif bet >= total_coins:
             conn.sendall(b"Haha nice try...\n")
             break
         conn.sendall(b"""Generating Random int....
@@ -52,7 +55,7 @@ def handle(conn, addr):
 
 if __name__ == "__main__":
     HOST = ''   # Symbolic name, meaning all available interfaces
-    PORT = 9002 # Arbitrary non-privileged port
+    PORT = 8989 # Arbitrary non-privileged port
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
