@@ -1,6 +1,7 @@
-import socketserver
+import socket
 import time
 import random
+import threading
 
 FLAG = "This is a test of your decription skills: hackgt{se3d_reap_repeat}"
 
@@ -19,38 +20,53 @@ def gen_key_str(rand_dec, length):
         tenner *= 10
     return to_return
 
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    def handle(self):
-        # self.request is the TCP socket connected to the client
-        t = int(time.time())
-        random.seed(t)
-        key = random.random()
+def handle(conn, addr):
+    # self.request is the TCP socket connected to the client
+    t = int(time.time())
+    random.seed(t)
+    key = random.random()
 
-        key_str = gen_key_str(key, len(FLAG))
-        xored = kinda_xor(FLAG, key_str)
-        to_send = "Sending test message (definitely not the flag)\n"
-        to_send += xored
-        to_send += "\n"
-        to_send += "What do you want to encrypt?\n"
-        self.request.sendall(to_send.encode())
-        self.data = self.request.recv(1024).strip().decode("utf-8")
+    key_str = gen_key_str(key, len(FLAG))
+    xored = kinda_xor(FLAG, key_str)
+    to_send = "Sending test message (definitely not the flag)\n"
+    to_send += xored
+    to_send += "\n"
+    to_send += "What do you want to encrypt?\n"
+    conn.sendall(to_send.encode())
+    data = conn.recv(1024).strip().decode("utf-8")
 
-        key_str2 = gen_key_str(key, len(self.data))
-        xored2 = kinda_xor(self.data, key_str2)
+    key_str2 = gen_key_str(key, len(data))
+    xored2 = kinda_xor(data, key_str2)
 
-        print(key_str)
-        print(key_str2)
-        print(key_str == key_str2)
-        print(xored == xored2)
-        self.request.sendall(xored2.encode())
-        self.request.sendall(b"\n\n")
+    print(key_str)
+    print(key_str2)
+    print(key_str == key_str2)
+    print(xored == xored2)
+    conn.sendall(xored2.encode())
+    conn.sendall(b"\n\n")
+    conn.close()
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 9876
+    HOST = ''   # Symbolic name, meaning all available interfaces
+    PORT = 9090 # Arbitrary non-privileged port
 
-    # Create the server, binding to localhost on port 9999
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
+    #Bind socket to local host and port
+    try:
+        s.bind((HOST, PORT))
+    except socket.error as msg:
+        sys.exit()
+
+    #Start listening on socket
+    s.listen(10)
+
+    #now keep talking with the client
+    try:
+        while 1:
+            #wait to accept a connection - blocking call
+            conn, addr = s.accept()
+            t = threading.Thread(target=handle, args=(conn, addr))
+            t.start()
+    except KeyboardInterrupt:
+        s.close()
