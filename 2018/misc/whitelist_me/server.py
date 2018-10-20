@@ -70,7 +70,6 @@ def is_auth(ip):
 def handle(conn, addr):
     local_email = MY_SECRET_EMAIL
     ip = addr[0]
-
     if is_auth(ip):
         conn.sendall(STAGE_TWO_TEXT.format(FLAG).encode())
         selection = conn.recv(1024).decode('utf-8').strip()
