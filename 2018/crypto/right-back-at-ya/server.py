@@ -44,6 +44,7 @@ def handle(conn, addr):
     print(xored == xored2)
     conn.sendall(xored2.encode())
     conn.sendall(b"\n\n")
+    conn.close()
 
 if __name__ == "__main__":
     HOST = ''   # Symbolic name, meaning all available interfaces
