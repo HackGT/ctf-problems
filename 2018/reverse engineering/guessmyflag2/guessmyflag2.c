@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 char ans[17] = {103, 14, 111, 0, 97, 28, 105, 26, 122, 20, 102, 13, 107, 23, 98, 31};
 
