@@ -19,7 +19,7 @@ int main(int argc, const char* argv[]) {
     }
     flag[ind] = '\0';
     char input[17];
-    printf("Guess my flag:\n");
+    printf("Would you like my flag?\n");
     fgets(input, 17, stdin);
     input[16] = '\0';
     for (int i = 0; i < 17; i++) {
