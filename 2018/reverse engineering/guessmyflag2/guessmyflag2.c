@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char ans[17] = {103, 14, 111, 0, 97, 28, 105, 26, 122, 20, 102, 13, 107, 23, 98, 31};
+char ans[17] = {103, 14, 111, 2, 97, 24, 105, 28, 122, 28, 102, 7, 107, 27, 98, 17};
 
 int main(int argc, const char* argv[]) {
     FILE *f;
@@ -21,14 +21,14 @@ int main(int argc, const char* argv[]) {
     char input[17];
     printf("Would you like my flag?\n");
     fgets(input, 17, stdin);
-    input[16] = '\0';
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 16; i++) {
         if (i % 2 == 0) {
             input[i] ^= i;
         } else {
             input[i] ^= input[i - 1];
         }
     }
+    input[16] = '\0';
     if (!memcmp(input, ans, 16)) {
         puts(flag);
     } else {
